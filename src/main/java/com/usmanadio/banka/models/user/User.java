@@ -2,7 +2,6 @@ package com.usmanadio.banka.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.usmanadio.banka.models.account.Account;
-import com.usmanadio.banka.models.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,16 +69,5 @@ public class User {
             accounts = new ArrayList<>();
         }
         accounts.add(account);
-    }
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId")
-    private List<Transaction> transactions;
-
-    public void addTransaction(Transaction transaction) {
-        if (transactions == null) {
-            transactions = new ArrayList<>();
-        }
-        transactions.add(transaction);
     }
 }
