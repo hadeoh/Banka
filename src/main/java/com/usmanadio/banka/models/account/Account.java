@@ -1,5 +1,6 @@
 package com.usmanadio.banka.models.account;
 
+import com.usmanadio.banka.models.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,10 +52,21 @@ public class Account {
     @JoinColumn(name = "accountId")
     private List<DomiciliaryAccount> domiciliaryAccounts;
 
-    public void addDomiciliaryAccounts(DomiciliaryAccount domiciliaryAccount) {
+    public void addDomiciliaryAccount(DomiciliaryAccount domiciliaryAccount) {
         if (domiciliaryAccounts == null) {
             domiciliaryAccounts = new ArrayList<>();
         }
         domiciliaryAccounts.add(domiciliaryAccount);
+    }
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "accountNumber")
+    private List<Transaction> transactions;
+
+    public void addTransaction(Transaction transaction) {
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+        }
+        transactions.add(transaction);
     }
 }
