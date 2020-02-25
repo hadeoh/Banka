@@ -5,18 +5,17 @@ import com.usmanadio.banka.models.account.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -52,6 +51,7 @@ public class User {
     private String profileImageUrl;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     List<Role> roles;
 
     @CreationTimestamp
@@ -61,12 +61,13 @@ public class User {
     private Timestamp updatedAt;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "userId")
-    private List<Account> accounts;
+    private Set<Account> accounts;
 
     public void addAccount(Account account) {
         if (accounts == null) {
-            accounts = new ArrayList<>();
+            accounts = new HashSet<>();
         }
         accounts.add(account);
     }

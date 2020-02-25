@@ -4,17 +4,16 @@ import com.usmanadio.banka.models.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "accounts")
@@ -49,23 +48,25 @@ public class Account {
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "accountId")
-    private List<DomiciliaryAccount> domiciliaryAccounts;
+    private Set<DomiciliaryAccount> domiciliaryAccounts;
 
     public void addDomiciliaryAccount(DomiciliaryAccount domiciliaryAccount) {
         if (domiciliaryAccounts == null) {
-            domiciliaryAccounts = new ArrayList<>();
+            domiciliaryAccounts = new HashSet<>();
         }
         domiciliaryAccounts.add(domiciliaryAccount);
     }
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "accountNumber")
-    private List<Transaction> transactions;
+    private Set<Transaction> transactions;
 
     public void addTransaction(Transaction transaction) {
         if (transactions == null) {
-            transactions = new ArrayList<>();
+            transactions = new HashSet<>();
         }
         transactions.add(transaction);
     }
