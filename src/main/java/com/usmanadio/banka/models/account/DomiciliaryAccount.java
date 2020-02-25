@@ -1,14 +1,13 @@
 package com.usmanadio.banka.models.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.usmanadio.banka.models.AuditModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -18,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class DomiciliaryAccount {
+public class DomiciliaryAccount extends AuditModel {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -28,4 +27,9 @@ public class DomiciliaryAccount {
     @NotNull
     @NotBlank
     private DomiciliaryAccountType domiciliaryAccountType;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "accountNumber", referencedColumnName = "accountNumber", nullable = false)
+    @JsonIgnore
+    private Account account;
 }

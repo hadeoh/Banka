@@ -1,15 +1,17 @@
 package com.usmanadio.banka.models.transaction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.usmanadio.banka.models.AuditModel;
+import com.usmanadio.banka.models.account.Account;
+import com.usmanadio.banka.models.transfer.Transfer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Transaction {
+public class Transaction extends AuditModel {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -32,6 +34,11 @@ public class Transaction {
     @NotBlank
     private Double amount;
 
-    @CreationTimestamp
-    private Timestamp createdAt;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "accountNumber", nullable = false)
+    @JsonIgnore
+    private Account account;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL, mappedBy = "transaction")
+    private Transfer transfer;
 }
