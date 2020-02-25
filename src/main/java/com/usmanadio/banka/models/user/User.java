@@ -1,28 +1,27 @@
 package com.usmanadio.banka.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.usmanadio.banka.models.account.Account;
+import com.usmanadio.banka.models.AuditModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class User {
+public class User extends AuditModel {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -54,21 +53,9 @@ public class User {
     @Fetch(value = FetchMode.SUBSELECT)
     List<Role> roles;
 
-    @CreationTimestamp
-    private Timestamp createdAt;
+    @JsonIgnore
+    private String emailVerificationToken;
 
-    @UpdateTimestamp
-    private Timestamp updatedAt;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Fetch(value = FetchMode.SUBSELECT)
-    @JoinColumn(name = "userId")
-    private Set<Account> accounts;
-
-    public void addAccount(Account account) {
-        if (accounts == null) {
-            accounts = new HashSet<>();
-        }
-        accounts.add(account);
-    }
+    @JsonIgnore
+    private EmailVerificationStatus emailVerificationStatus = EmailVerificationStatus.UNVERIFIED;
 }
