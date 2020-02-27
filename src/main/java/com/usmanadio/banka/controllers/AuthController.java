@@ -1,5 +1,6 @@
 package com.usmanadio.banka.controllers;
 
+import com.usmanadio.banka.dto.auth.LoginRequest;
 import com.usmanadio.banka.dto.auth.SignUpRequest;
 import com.usmanadio.banka.models.user.User;
 import com.usmanadio.banka.responses.Response;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("auth")
@@ -39,5 +42,16 @@ public class AuthController {
         Response<String> response = new Response<>(HttpStatus.ACCEPTED);
         response.setMessage("You are now a verified user of Banka");
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<Response<Map<String, String>>> signInUser(@Valid @RequestBody LoginRequest loginRequest) {
+        String token = authService.signInUser(loginRequest.getEmail(), loginRequest.getPassword());
+        Response<Map<String, String>> response = new Response<>(HttpStatus.OK);
+        response.setMessage("User successfully logged in");
+        Map<String, String> result = new HashMap<>();
+        result.put("token", token);
+        response.setData(result);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
