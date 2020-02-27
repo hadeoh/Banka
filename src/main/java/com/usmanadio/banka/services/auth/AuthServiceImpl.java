@@ -9,6 +9,10 @@ import com.usmanadio.banka.security.JwtTokenProvider;
 import com.usmanadio.banka.services.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +25,17 @@ public class AuthServiceImpl implements AuthService {
     private JwtTokenProvider jwtTokenProvider;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private EmailSender emailSender;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     public AuthServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
-                           BCryptPasswordEncoder bCryptPasswordEncoder, EmailSender emailSender) {
+                           BCryptPasswordEncoder bCryptPasswordEncoder, EmailSender emailSender,
+                           AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.emailSender = emailSender;
+        this.authenticationManager = authenticationManager;
     }
 
     public void createUser(User user) {
@@ -57,5 +64,20 @@ public class AuthServiceImpl implements AuthService {
         }
         user.setEmailVerificationStatus(EmailVerificationStatus.VERIFIED);
         userRepository.save(user);
+    }
+
+    public String signInUser(String email, String password) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password));
+        if (authentication == null) {
+            throw new CustomException("User not found", HttpStatus.BAD_REQUEST);
+        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = userRepository.findByEmail(email);
+        if (user.getEmailVerificationStatus() == EmailVerificationStatus.UNVERIFIED) {
+            throw new CustomException("You haven't verified your account yet", HttpStatus.BAD_REQUEST);
+        }
+        return jwtTokenProvider.createToken(user.getId(), email, user.getRoles());
     }
 }

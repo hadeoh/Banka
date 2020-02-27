@@ -112,4 +112,24 @@ public class AuthTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Unable to verify that you registered here")));
     }
+
+//    @Test
+//    public void login_a_registered_and_verified_user() throws Exception {
+//        User user1 = new User();
+//        user1.setEmail("phillip@gmail.com");
+//        user1.setPhoneNumber("090827678372");
+//        user1.setEmailVerificationToken("738bgi");
+//        user1.setPassword("1234567");
+//        user1.setEmailVerificationStatus(EmailVerificationStatus.VERIFIED);
+//
+//        when(userRepository.findByEmail(user1.getEmail())).thenReturn(user1);
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setEmail(user1.getEmail());
+//        loginRequest.setPassword(user1.getPassword());
+//        mockMvc.perform(post("/auth/login")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(asJsonString(loginRequest))).andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(content().string(containsString("User successfully logged in")));
+//    }
 }
