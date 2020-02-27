@@ -1,6 +1,7 @@
 package com.usmanadio.banka.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.usmanadio.banka.models.AuditModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +42,8 @@ public class User extends AuditModel {
 
     @NotBlank
     @NotNull
-    @JsonIgnore
+    @JsonIgnoreProperties
+    @Size(min = 6)
     private String password;
 
     @NotBlank
