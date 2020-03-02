@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+logging:
+  level:
+    root: WARN
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banka?createDatabaseIfNotExist=true&userSSL=false&serverTimezone=UTC
+    username: postgres
+    password: modupeola1960
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    driver-class-name: org.postgresql.Driver
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+      # Allows Hibernate to generate SQL optimized for a particular DBMS
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: usthmandanfodio@gmail.com
+    password: modupeola1960
+
+    #other properties
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
