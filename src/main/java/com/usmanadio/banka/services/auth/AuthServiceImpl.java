@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -54,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 "You are required to use the following link to verify your account\n" + url + "\n" +
                 "Do something outside today!\n" +
                 " –Your friends at Banka";
-        emailSender.sendEmail(user.getEmail(), "Registration Verification", message);
+        emailSender.sendEmail(user.getEmail(), "Banka Registration Verification", message);
     }
 
     public void verifyUser(String token) {
@@ -78,6 +79,40 @@ public class AuthServiceImpl implements AuthService {
         if (user.getEmailVerificationStatus() == EmailVerificationStatus.UNVERIFIED) {
             throw new CustomException("You haven't verified your account yet", HttpStatus.BAD_REQUEST);
         }
-        return jwtTokenProvider.createToken(user.getId(), email, user.getRoles());
+        return jwtTokenProvider.createToken(user.getId(), email, user.getRoles(), 86400000);
+    }
+
+    public void resetPassword(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new CustomException("You are yet to register on Banka", HttpStatus.BAD_REQUEST);
+        }
+        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(),
+                user.getRoles(), 3600000);
+        System.out.println(token);
+        String url = "http://localhost:3000/password-reset/" + user.getId() + token;
+
+        String message =
+                "Hey" + user.getFullName() + ",\n" +
+                        "We heard that you forgot your Banka password. Sorry about that!\n" +
+                        "But don’t worry! You can use the following link to reset your password:\n" + url + "\n" +
+                        "If you don’t use this link within 1 hour, it will expire.\n" +
+                        "Do something outside today!\n" +
+                        " –Your friends at Banka";
+        emailSender.sendEmail(user.getEmail(), "Banka Reset Password", message);
+    }
+
+    public void setNewPassword(UUID id, String newPassword, String token) {
+        if (jwtTokenProvider.isTokenExpired(token)) {
+            throw new CustomException("The token has expired", HttpStatus.FORBIDDEN);
+        }
+        UUID userId = jwtTokenProvider.getId(token);
+        String email = jwtTokenProvider.getEmail(token);
+        if (id != userId || !userRepository.existsByEmail(email)) {
+            throw new CustomException("There is a compromise", HttpStatus.BAD_REQUEST);
+        }
+        User user = userRepository.findById(userId);
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

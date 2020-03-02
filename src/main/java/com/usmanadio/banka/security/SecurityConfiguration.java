@@ -38,6 +38,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL).permitAll()
                 .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.PATCH, SecurityConstants.AUTH_VERIFY_URL).permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConstants.RESET_PASSWORD_URL).permitAll()
+                .antMatchers(HttpMethod.PATCH, SecurityConstants.SET_NEW_PASSWORD_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
