@@ -65,10 +65,6 @@ public class JwtTokenProvider {
         return getAllClaims(token).getSubject();
     }
 
-    public UUID getId(String token) {
-        return (UUID) getAllClaims(token).get("userId");
-    }
-
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader(SecurityConstants.TOKEN_HEADER);
         if (bearerToken != null && bearerToken.startsWith(SecurityConstants.TOKEN_PREFIX)) {

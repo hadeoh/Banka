@@ -1,6 +1,7 @@
 package com.usmanadio.banka.controllers;
 
 import com.usmanadio.banka.dto.auth.LoginRequest;
+import com.usmanadio.banka.dto.auth.NewPasswordRequest;
 import com.usmanadio.banka.dto.auth.PasswordResetRequest;
 import com.usmanadio.banka.dto.auth.SignUpRequest;
 import com.usmanadio.banka.models.user.User;
@@ -68,9 +69,9 @@ public class AuthController {
 
     @PatchMapping("set-new-password")
     public ResponseEntity<Response<String>> setNewPassword(@RequestParam("id") UUID id,
-                                                           @Valid @RequestBody String newPassword,
+                                                           @Valid @RequestBody NewPasswordRequest newPasswordRequest,
                                                            @RequestParam String token) {
-        authService.setNewPassword(id, newPassword, token);
+        authService.setNewPassword(id, newPasswordRequest.getNewPassword(), token);
         Response<String> response = new Response<>(HttpStatus.OK);
         response.setMessage("Password successfully reset");
         return new ResponseEntity<>(response, HttpStatus.OK);

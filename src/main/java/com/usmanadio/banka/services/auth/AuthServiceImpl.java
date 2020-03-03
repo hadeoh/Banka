@@ -106,12 +106,11 @@ public class AuthServiceImpl implements AuthService {
         if (jwtTokenProvider.isTokenExpired(token)) {
             throw new CustomException("The token has expired", HttpStatus.FORBIDDEN);
         }
-        UUID userId = jwtTokenProvider.getId(token);
         String email = jwtTokenProvider.getEmail(token);
-        if (id != userId || !userRepository.existsByEmail(email)) {
+        if (!userRepository.existsByEmail(email)) {
             throw new CustomException("There is a compromise", HttpStatus.BAD_REQUEST);
         }
-        User user = userRepository.findById(userId);
+        User user = userRepository.findById(id);
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.save(user);
     }

@@ -3,6 +3,7 @@ package com.usmanadio.banka.integration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usmanadio.banka.dto.auth.LoginRequest;
+import com.usmanadio.banka.dto.auth.PasswordResetRequest;
 import com.usmanadio.banka.models.user.EmailVerificationStatus;
 import com.usmanadio.banka.models.user.User;
 import com.usmanadio.banka.repositories.UserRepository;
@@ -119,6 +120,18 @@ public class AuthTest {
                 .content(asJsonString(loginRequest))).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("User successfully logged in")));
+    }
+
+    @Test
+    public void reset_password() throws Exception {
+        User user = createUser(4, null);
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        passwordResetRequest.setEmail(user.getEmail());
+        mockMvc.perform(post("/auth/password-reset")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(passwordResetRequest))).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("A password reset link has been sent to your email")));
     }
 }
 //./mvnw test -Dspring.profiles.active=test
