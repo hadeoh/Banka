@@ -13,9 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -48,14 +47,12 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<Response<Map<String, String>>> signInUser(@Valid @RequestBody LoginRequest loginRequest) {
-        String token = authService.signInUser(loginRequest.getEmail(), loginRequest.getPassword());
-        Response<Map<String, String>> response = new Response<>(HttpStatus.OK);
-        response.setMessage("User successfully logged in");
-        Map<String, String> result = new HashMap<>();
-        result.put("token", token);
-        response.setData(result);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<Response<String>> signInUser(@Valid @RequestBody LoginRequest loginRequest,
+                                                                    HttpServletResponse response) {
+        authService.signInUser(loginRequest.getEmail(), loginRequest.getPassword(), response);
+        Response<String> res = new Response<>(HttpStatus.OK);
+        res.setMessage("User successfully logged in");
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping("password-reset")
