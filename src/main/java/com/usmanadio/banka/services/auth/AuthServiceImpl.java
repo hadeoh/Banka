@@ -16,7 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -67,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
-    public String signInUser(String email, String password) {
+    public void signInUser(String email, String password, HttpServletResponse response) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
@@ -79,7 +81,8 @@ public class AuthServiceImpl implements AuthService {
         if (user.getEmailVerificationStatus() == EmailVerificationStatus.UNVERIFIED) {
             throw new CustomException("You haven't verified your account yet", HttpStatus.BAD_REQUEST);
         }
-        return jwtTokenProvider.createToken(user.getId(), email, user.getRoles(), 86400000);
+        String token = jwtTokenProvider.createToken(user.getId(), email, user.getRoles(), 86400000);
+        response.addHeader("token", token);
     }
 
     public void resetPassword(String email) {
@@ -110,8 +113,12 @@ public class AuthServiceImpl implements AuthService {
         if (!userRepository.existsByEmail(email)) {
             throw new CustomException("There is a compromise", HttpStatus.BAD_REQUEST);
         }
-        User user = userRepository.findById(id);
-        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        userRepository.save(user);
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            user.get().setPassword(bCryptPasswordEncoder.encode(newPassword));
+            userRepository.save(user.get());
+        } else {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+        }
     }
 }

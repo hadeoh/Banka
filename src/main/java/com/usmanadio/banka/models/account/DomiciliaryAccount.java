@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -25,7 +24,6 @@ public class DomiciliaryAccount extends AuditModel {
     private UUID id;
 
     @NotNull
-    @NotBlank
     private DomiciliaryAccountType domiciliaryAccountType;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -18,14 +18,14 @@ import javax.validation.ConstraintViolationException;
 @ControllerAdvice
 public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllExceptions(Exception exception) {
-        Response<User> response = new Response(HttpStatus.INTERNAL_SERVER_ERROR);
-        response.setMessage(exception.getMessage());
-        response.setDebugMessage(exception.getLocalizedMessage());
-        response.setError(exception.toString());
-        return buildResponseEntity(response);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleAllExceptions(Exception exception) {
+//        Response<User> response = new Response(HttpStatus.INTERNAL_SERVER_ERROR);
+//        response.setMessage(exception.getMessage());
+//        response.setDebugMessage(exception.getLocalizedMessage());
+//        response.setError(exception.toString());
+//        return buildResponseEntity(response);
+//    }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintValidation(ConstraintViolationException exception) {
