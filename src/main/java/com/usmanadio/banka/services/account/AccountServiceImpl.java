@@ -62,12 +62,22 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
-    public Account setAccountStatus(String accountNumber, AccountStatus accountStatus, HttpServletRequest request) {
+    public Account setAccountStatus(String accountNumber, AccountStatus accountStatus) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
         if (account == null) {
             throw new CustomException("Account does not exist", HttpStatus.NOT_FOUND);
         }
         account.setAccountStatus(accountStatus);
         return accountRepository.save(account);
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
+    public void deleteAccount(String accountNumber) {
+        Integer res = accountRepository.deleteByAccountNumber(accountNumber);
+        if (res == null || res == 0) {
+            throw new CustomException("Account with account number " + accountNumber + " does not exist",
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 }

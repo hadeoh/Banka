@@ -8,5 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AccountService {
     Account createAccount(AccountRequest accountRequest, HttpServletRequest request);
-    Account setAccountStatus(String accountNumber, AccountStatus accountStatus, HttpServletRequest request);
+    Account setAccountStatus(String accountNumber, AccountStatus accountStatus);
+    void deleteAccount(String accountNumber);
 }
