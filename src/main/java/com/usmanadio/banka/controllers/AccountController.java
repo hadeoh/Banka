@@ -40,9 +40,8 @@ public class AccountController {
 
     @PatchMapping("{accountNumber}")
     public ResponseEntity<Response<Account>> setAccountStatus(@PathVariable String accountNumber,
-                                                              @RequestBody AccountStatusRequest accountStatus,
-                                                              HttpServletRequest request) {
-        Account account = accountService.setAccountStatus(accountNumber, accountStatus.getAccountStatus(), request);
+                                                              @RequestBody AccountStatusRequest accountStatus) {
+        Account account = accountService.setAccountStatus(accountNumber, accountStatus.getAccountStatus());
         Response<Account> response = new Response<>(HttpStatus.ACCEPTED);
         response.setMessage("Account deactivated successfully");
         if (accountStatus.getAccountStatus() == AccountStatus.ACTIVE) {
@@ -50,5 +49,13 @@ public class AccountController {
         }
         response.setData(account);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping("{accountNumber}")
+    public ResponseEntity<Response<String>> deleteAccount(@PathVariable String accountNumber) {
+        accountService.deleteAccount(accountNumber);
+        Response<String> response = new Response<>(HttpStatus.OK);
+        response.setMessage("Account with account number " + accountNumber +" deleted successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
