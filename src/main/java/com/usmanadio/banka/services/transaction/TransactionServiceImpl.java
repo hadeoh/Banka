@@ -2,6 +2,7 @@ package com.usmanadio.banka.services.transaction;
 
 import com.usmanadio.banka.exceptions.CustomException;
 import com.usmanadio.banka.models.account.Account;
+import com.usmanadio.banka.models.account.AccountType;
 import com.usmanadio.banka.models.transaction.Transaction;
 import com.usmanadio.banka.models.transaction.TransactionType;
 import com.usmanadio.banka.models.user.User;
@@ -47,17 +48,47 @@ public class TransactionServiceImpl implements TransactionService {
             throw new CustomException("Account does not exist", HttpStatus.BAD_REQUEST);
         }
         Double newBalance = account.getAccountBalance() + transaction.getAmount();
+        Transaction newTransaction = transactionCalc(transaction, user, account, newBalance, TransactionType.CREDIT);
+        String message = "Hi, " + user.getFullName() + "\n" +
+                "Your account has been credited with an amount of " + transaction.getAmount() + "\n" +
+                "Your balance is " + account.getAccountBalance();
+        emailSender.sendEmail(user.getEmail(), "CREDIT "+ accountNumber, message);
+        return newTransaction;
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_STAFF')")
+    public Transaction debitAccount(Transaction transaction, String accountNumber, HttpServletRequest request) {
+        User user = userRepository.findByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(request)));
+        Account account = accountRepository.findByAccountNumber(accountNumber);
+        if (account == null) {
+            throw new CustomException("Account does not exist", HttpStatus.BAD_REQUEST);
+        }
+        if (account.getAccountType() == AccountType.CURRENT) {
+            if (account.getAccountBalance() - transaction.getAmount() <= 1000.00) {
+                throw new CustomException("Insufficient balance", HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (transaction.getAmount() > account.getAccountBalance()) {
+            throw new CustomException("Insufficient balance", HttpStatus.BAD_REQUEST);
+        }
+        Double newBalance = account.getAccountBalance() - transaction.getAmount();
+        Transaction newTransaction = transactionCalc(transaction, user, account, newBalance, TransactionType.DEBIT);
+        String message = "Hi, " + user.getFullName() + "\n" +
+                "Your account has been debited with an amount of " + transaction.getAmount() + "\n" +
+                "Your balance is " + account.getAccountBalance();
+        emailSender.sendEmail(user.getEmail(), "DEBIT "+ accountNumber, message);
+        return newTransaction;
+    }
+
+    private Transaction transactionCalc(Transaction transaction, User user, Account account, Double newBalance, TransactionType debit) {
         transaction.setAccount(account);
         transaction.setOldBalance(account.getAccountBalance());
         transaction.setNewBalance(newBalance);
-        transaction.setTransactionType(TransactionType.CREDIT);
+        transaction.setTransactionType(debit);
         transaction.setCashierId(user.getId());
         account.setAccountBalance(newBalance);
         accountRepository.save(account);
-        Transaction newTransaction = transactionRepository.save(transaction);
-        String message = "Hi, " + user.getFullName() + "\n" +
-                "\tYour account has been credited with an amount of " + transaction.getAmount();
-        emailSender.sendEmail(user.getEmail(), "CREDIT"+ accountNumber, message);
-        return newTransaction;
+        return transactionRepository.save(transaction);
     }
 }
