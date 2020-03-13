@@ -37,4 +37,16 @@ public class TransactionController {
         response.setData(transaction);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PostMapping("{accountNumber}/debit")
+    public ResponseEntity<Response<Transaction>> debitAccount(@PathVariable String accountNumber, @Valid @RequestBody
+            TransactionRequest transactionRequest, HttpServletRequest request) {
+        Transaction transaction = transactionService.debitAccount(modelMapper.map(transactionRequest,
+                Transaction.class), accountNumber, request);
+        Response<Transaction> response = new Response<>(HttpStatus.CREATED);
+        response.setMessage("Account with account number " + accountNumber + " has been successfully debited with " +
+                transactionRequest.getAmount());
+        response.setData(transaction);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 }

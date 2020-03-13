@@ -6,4 +6,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface TransactionService {
     Transaction creditAccount(Transaction transaction, String accountNumber, HttpServletRequest request);
+    Transaction debitAccount(Transaction transaction, String accountNumber, HttpServletRequest request);
 }
