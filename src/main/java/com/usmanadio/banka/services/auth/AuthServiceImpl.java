@@ -9,6 +9,7 @@ import com.usmanadio.banka.security.JwtTokenProvider;
 import com.usmanadio.banka.services.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,9 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -31,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
-                           BCryptPasswordEncoder bCryptPasswordEncoder, EmailSender emailSender,
-                           AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(UserRepository userRepository,
+                           JwtTokenProvider jwtTokenProvider, BCryptPasswordEncoder bCryptPasswordEncoder,
+                           EmailSender emailSender, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -53,10 +52,10 @@ public class AuthServiceImpl implements AuthService {
         String url = "http://localhost:3000/verify-email/" + token;
         String message =
                 "Hey" + user.getFullName() + ",\n" +
-                "You just created an account with Banka\n" +
-                "You are required to use the following link to verify your account\n" + url + "\n" +
-                "Do something outside today!\n" +
-                " –Your friends at Banka";
+                        "You just created an account with Banka\n" +
+                        "You are required to use the following link to verify your account\n" + url + "\n" +
+                        "Do something outside today!\n" +
+                        " –Your friends at Banka";
         emailSender.sendEmail(user.getEmail(), "Banka Registration Verification", message);
     }
 
@@ -120,5 +119,16 @@ public class AuthServiceImpl implements AuthService {
         } else {
             throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public User changeUserRole(UUID id, Role role) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new CustomException("User does not exist", HttpStatus.NOT_FOUND);
+        }
+        List<Role> roles = new ArrayList<>(Collections.singletonList(role));
+        user.get().setRoles(roles);
+        return userRepository.save(user.get());
     }
 }
