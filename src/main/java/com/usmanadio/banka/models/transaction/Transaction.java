@@ -5,16 +5,17 @@ import com.usmanadio.banka.models.AuditModel;
 import com.usmanadio.banka.models.account.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "transactions")
 @NoArgsConstructor
@@ -28,23 +29,18 @@ public class Transaction extends AuditModel {
     private UUID id;
 
     @NotNull
-    @NotBlank
     private TransactionType transactionType;
 
     @NotNull
-    @NotBlank
     private Double amount;
 
     @NotNull
-    @NotBlank
     private UUID cashierId;
 
     @NotNull
-    @NotBlank
     private Double oldBalance;
 
     @NotNull
-    @NotBlank
     private Double newBalance;
 
     @ManyToOne(fetch = FetchType.LAZY)
