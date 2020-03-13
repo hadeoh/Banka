@@ -100,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
                         "But don’t worry! You can use the following link to reset your password:\n" + url + "\n" +
                         "If you don’t use this link within 1 hour, it will expire.\n" +
                         "Do something outside today!\n" +
-                        " –Your friends at Banka";
+                        "– Your friends at Banka";
         emailSender.sendEmail(user.getEmail(), "Banka Reset Password", message);
     }
 
