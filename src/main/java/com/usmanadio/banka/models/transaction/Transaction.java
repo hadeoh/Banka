@@ -3,7 +3,6 @@ package com.usmanadio.banka.models.transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.usmanadio.banka.models.AuditModel;
 import com.usmanadio.banka.models.account.Account;
-import com.usmanadio.banka.models.transfer.Transfer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,12 +35,21 @@ public class Transaction extends AuditModel {
     @NotBlank
     private Double amount;
 
+    @NotNull
+    @NotBlank
+    private UUID cashierId;
+
+    @NotNull
+    @NotBlank
+    private Double oldBalance;
+
+    @NotNull
+    @NotBlank
+    private Double newBalance;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accountNumber", nullable = false)
+    @JoinColumn(name = "accountNumber", referencedColumnName = "accountNumber", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Account account;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL, mappedBy = "transaction")
-    private Transfer transfer;
 }
