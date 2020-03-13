@@ -113,4 +113,18 @@ public class AccountServiceImpl implements AccountService {
         }
         return accountRepository.findAllByUser(user.get());
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
+    public List<Account> viewAccountsBasedOnStatus(AccountStatus accountStatus, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Slice<Account> accounts = accountRepository.findAllByAccountStatus(accountStatus, pageable);
+        return accounts.getContent();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
+    public List<Account> viewAccountsBasedOnType(AccountType accountType, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Slice<Account> accounts = accountRepository.findAllByAccountType(accountType, pageable);
+        return accounts.getContent();
+    }
 }

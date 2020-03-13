@@ -4,6 +4,7 @@ import com.usmanadio.banka.dto.account.AccountRequest;
 import com.usmanadio.banka.dto.account.AccountStatusRequest;
 import com.usmanadio.banka.models.account.Account;
 import com.usmanadio.banka.models.account.AccountStatus;
+import com.usmanadio.banka.models.account.AccountType;
 import com.usmanadio.banka.responses.Response;
 import com.usmanadio.banka.services.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class AccountController {
     public ResponseEntity<Response<String>> deleteAccount(@PathVariable String accountNumber) {
         accountService.deleteAccount(accountNumber);
         Response<String> response = new Response<>(HttpStatus.OK);
-        response.setMessage("Account with account number " + accountNumber +" deleted successfully");
+        response.setMessage("Account with account number " + accountNumber + " deleted successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -91,6 +92,28 @@ public class AccountController {
         List<Account> accounts = accountService.viewUserAccounts(userId);
         Response<List<Account>> response = new Response<>(HttpStatus.OK);
         response.setMessage("All user accounts retrieved successfully");
+        response.setData(accounts);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("users")
+    public ResponseEntity<Response<List<Account>>> viewAccountsBasedOnStatus(@RequestParam(defaultValue = "1") Integer page,
+                                                                             @RequestParam(defaultValue = "10") Integer size,
+                                                                             @RequestParam AccountStatus accountStatus) {
+        List<Account> accounts = accountService.viewAccountsBasedOnStatus(accountStatus, page, size);
+        Response<List<Account>> response = new Response<>(HttpStatus.OK);
+        response.setMessage("All " + accountStatus +" accounts retrieved successfully");
+        response.setData(accounts);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("users-accounts")
+    public ResponseEntity<Response<List<Account>>> viewAccountsBasedOnStatus(@RequestParam(defaultValue = "1") Integer page,
+                                                                             @RequestParam(defaultValue = "10") Integer size,
+                                                                             @RequestParam AccountType accountType) {
+        List<Account> accounts = accountService.viewAccountsBasedOnType(accountType, page, size);
+        Response<List<Account>> response = new Response<>(HttpStatus.OK);
+        response.setMessage("All " + accountType +" accounts retrieved successfully");
         response.setData(accounts);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
