@@ -4,6 +4,7 @@ import com.usmanadio.banka.dto.auth.LoginRequest;
 import com.usmanadio.banka.dto.auth.NewPasswordRequest;
 import com.usmanadio.banka.dto.auth.PasswordResetRequest;
 import com.usmanadio.banka.dto.auth.SignUpRequest;
+import com.usmanadio.banka.models.user.Role;
 import com.usmanadio.banka.models.user.User;
 import com.usmanadio.banka.responses.Response;
 import com.usmanadio.banka.services.auth.AuthService;
@@ -72,5 +73,14 @@ public class AuthController {
         Response<String> response = new Response<>(HttpStatus.OK);
         response.setMessage("Password successfully reset");
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("user")
+    public ResponseEntity<Response<User>> changeUserRole(@RequestParam UUID id, @RequestParam Role role) {
+        User user = authService.changeUserRole(id, role);
+        Response<User> response = new Response<>(HttpStatus.ACCEPTED);
+        response.setMessage("User role successfully changed to " + role);
+        response.setData(user);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }
