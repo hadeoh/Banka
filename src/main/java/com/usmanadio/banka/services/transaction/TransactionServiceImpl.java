@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -79,6 +81,14 @@ public class TransactionServiceImpl implements TransactionService {
                 "Your balance is " + account.getAccountBalance();
         emailSender.sendEmail(user.getEmail(), "DEBIT "+ accountNumber, message);
         return newTransaction;
+    }
+
+    public Transaction getATransaction(UUID id) {
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        if (transaction.isEmpty()) {
+            throw new CustomException("Such transaction does not exist", HttpStatus.NOT_FOUND);
+        }
+        return transaction.get();
     }
 
     private Transaction transactionCalc(Transaction transaction, User user, Account account, Double newBalance, TransactionType debit) {

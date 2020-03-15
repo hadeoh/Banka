@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("transactions")
@@ -48,5 +49,14 @@ public class TransactionController {
                 transactionRequest.getAmount());
         response.setData(transaction);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("{transactionId}")
+    public ResponseEntity<Response<Transaction>> getATransaction(@PathVariable UUID transactionId) {
+        Transaction transaction = transactionService.getATransaction(transactionId);
+        Response<Transaction> response = new Response<>(HttpStatus.OK);
+        response.setMessage("Transaction retrieved successfully");
+        response.setData(transaction);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
