@@ -5,6 +5,7 @@ import com.usmanadio.banka.dto.account.AccountStatusRequest;
 import com.usmanadio.banka.models.account.Account;
 import com.usmanadio.banka.models.account.AccountStatus;
 import com.usmanadio.banka.models.account.AccountType;
+import com.usmanadio.banka.models.transaction.Transaction;
 import com.usmanadio.banka.responses.Response;
 import com.usmanadio.banka.services.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,18 @@ public class AccountController {
         Response<List<Account>> response = new Response<>(HttpStatus.OK);
         response.setMessage("All " + accountType +" accounts retrieved successfully");
         response.setData(accounts);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("{accountNumber}/transactions")
+    public ResponseEntity<Response<List<Transaction>>> getTransactions(@RequestParam(defaultValue = "1") Integer page,
+                                                                             @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                                             @RequestParam(defaultValue = "10") Integer size,
+                                                                             @PathVariable String accountNumber) {
+        List<Transaction> transactions = accountService.getTransactions(accountNumber, page, size, sortBy);
+        Response<List<Transaction>> response = new Response<>(HttpStatus.OK);
+        response.setMessage("All transactions retrieved successfully");
+        response.setData(transactions);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

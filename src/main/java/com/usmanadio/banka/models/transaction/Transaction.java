@@ -13,6 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -21,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Transaction extends AuditModel {
+public class Transaction extends AuditModel implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -43,7 +44,7 @@ public class Transaction extends AuditModel {
     @NotNull
     private Double newBalance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "accountNumber", referencedColumnName = "accountNumber", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

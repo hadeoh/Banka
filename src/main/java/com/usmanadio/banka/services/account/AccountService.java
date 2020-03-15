@@ -4,6 +4,7 @@ import com.usmanadio.banka.dto.account.AccountRequest;
 import com.usmanadio.banka.models.account.Account;
 import com.usmanadio.banka.models.account.AccountStatus;
 import com.usmanadio.banka.models.account.AccountType;
+import com.usmanadio.banka.models.transaction.Transaction;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -27,4 +28,6 @@ public interface AccountService {
     List<Account> viewAccountsBasedOnStatus(AccountStatus accountStatus, Integer page, Integer size);
 
     List<Account> viewAccountsBasedOnType(AccountType accountType, Integer page, Integer size);
+
+    List<Transaction> getTransactions(String accountNumber, Integer page, Integer size, String sortBy);
 }

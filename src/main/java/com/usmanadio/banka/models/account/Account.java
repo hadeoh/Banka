@@ -14,6 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Account extends AuditModel {
+public class Account extends AuditModel implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
