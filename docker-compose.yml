@@ -1,0 +1,39 @@
+version: '3.6'
+services:
+  api:
+    container_name: banka
+    build: .
+#      context: .
+#      dockerfile: Dockerfile-dev
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/banka?serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: modupeola1960
+    ports:
+      - 8081:8081
+    restart: always
+    volumes:
+      - .:/build
+    depends_on:
+      - postgres
+    networks:
+      - backend
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: modupeola1960
+      POSTGRES_DB: banka
+      POSTGRES_USER: postgres
+    networks:
+      - backend
+    volumes:
+      - my-db:/var/lib/postgresql
+
+networks:
+  backend:
+volumes:
+  my-db:
