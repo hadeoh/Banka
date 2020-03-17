@@ -98,5 +98,6 @@ public class AccountTest {
     @Test
     public void printYes() {
         System.out.println("yes");
+        System.out.println("I got tested");
     }
 }
