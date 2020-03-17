@@ -1,1 +1,1 @@
-[![CircleCI](https://circleci.com/gh/hadeoh/Banka.svg?style=svg)](https://circleci.com/gh/hadeoh/Banka)
+[![CircleCI](https://circleci.com/gh/hadeoh/Banka.svg?style=svg)](https://circleci.com/gh/hadeoh/Banka) [![codecov](https://codecov.io/gh/hadeoh/Banka/branch/develop/graph/badge.svg)](https://codecov.io/gh/hadeoh/Banka)
